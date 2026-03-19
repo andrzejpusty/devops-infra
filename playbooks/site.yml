@@ -1,0 +1,16 @@
+- name: Full deploy
+  hosts: vps
+  become: true
+
+  roles:
+    - role: reverse_proxy
+      tags: proxy
+
+    - role: monitoring
+      tags: monitoring
+
+    - role: app
+      tags: app
+
+    - role: backup
+      tags: backup

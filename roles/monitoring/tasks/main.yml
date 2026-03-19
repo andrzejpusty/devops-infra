@@ -1,0 +1,28 @@
+- name: Ensure monitoring directory exists
+  file:
+    path: /opt/infra/monitoring
+    state: directory
+    mode: '0755'
+
+- name: Copy monitoring files
+  copy:
+    src: ../../files/monitoring/
+    dest: /opt/infra/monitoring/
+    mode: preserve
+
+- name: Deploy Alertmanager config from template
+  template:
+    src: alertmanager/alertmanager.yml.j2
+    dest: /opt/infra/monitoring/alertmanager/alertmanager.yml
+    mode: '0644'
+
+- name: Deploy Grafana docker-compose from template
+  template:
+    src: grafana/docker-compose.yml.j2
+    dest: /opt/infra/monitoring/docker-compose.yml
+    mode: '0644'
+
+- name: Start monitoring stack
+  command: docker compose up -d --remove-orphans
+  args:
+    chdir: /opt/infra/monitoring

@@ -1,0 +1,16 @@
+- name: Ensure application directory exists
+  file:
+    path: /opt/app/devops-app
+    state: directory
+    mode: '0755'
+
+- name: Copy application files
+  copy:
+    src: ../../files/app/devops-app/
+    dest: /opt/app/devops-app/
+    mode: preserve
+
+- name: Start application stack
+  command: docker compose up -d
+  args:
+    chdir: /opt/app/devops-app

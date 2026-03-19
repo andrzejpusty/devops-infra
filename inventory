@@ -1,0 +1,2 @@
+[vps]
+devops-vps ansible_host=91.99.199.199 ansible_user=deploy

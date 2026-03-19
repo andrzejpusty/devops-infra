@@ -1,0 +1,7 @@
+- name: Deploy infrastructure
+  hosts: vps
+  become: true
+
+  roles:
+    - reverse_proxy
+    - monitoring

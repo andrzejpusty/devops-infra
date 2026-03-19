@@ -1,0 +1,43 @@
+- name: Bootstrap VPS
+  hosts: vps
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install basic required packages
+      apt:
+        name:
+          - git
+        state: present
+
+    - name: Check if docker binary exists
+      command: which docker
+      register: docker_check
+      changed_when: false
+      failed_when: docker_check.rc != 0
+
+    - name: Check if docker compose plugin exists
+      command: docker compose version
+      register: docker_compose_check
+      changed_when: false
+      failed_when: docker_compose_check.rc != 0
+
+    - name: Ensure docker service is started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create base directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /opt/app
+        - /opt/infra
+        - /opt/backups
+        - /opt/backup-scripts

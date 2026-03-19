@@ -1,0 +1,16 @@
+- name: Ensure reverse proxy directory exists
+  file:
+    path: /opt/infra/reverse-proxy
+    state: directory
+    mode: '0755'
+
+- name: Copy reverse proxy files
+  copy:
+    src: ../../files/reverse-proxy/
+    dest: /opt/infra/reverse-proxy/
+    mode: preserve
+
+- name: Start reverse proxy
+  command: docker compose up -d
+  args:
+    chdir: /opt/infra/reverse-proxy

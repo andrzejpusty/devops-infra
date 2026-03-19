@@ -1,0 +1,6 @@
+- name: Deploy application
+  hosts: vps
+  become: true
+
+  roles:
+    - app

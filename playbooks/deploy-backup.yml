@@ -1,0 +1,6 @@
+- name: Deploy backup system
+  hosts: vps
+  become: true
+
+  roles:
+    - backup

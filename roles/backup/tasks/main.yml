@@ -1,0 +1,21 @@
+- name: Ensure backup directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/backups
+    - /opt/backup-scripts
+
+- name: Copy backup script
+  copy:
+    src: ../../files/backup-scripts/backup.sh
+    dest: /opt/backup-scripts/backup.sh
+    mode: '0755'
+
+- name: Ensure cron job for backup exists
+  cron:
+    name: "Daily infrastructure backup"
+    minute: "0"
+    hour: "2"
+    job: "/opt/backup-scripts/backup.sh >> /opt/backups/cron-backup.log 2>&1"

@@ -1,0 +1,81 @@
+groups:
+
+  - name: app-alerts
+    rules:
+
+      - alert: AppDown
+        expr: probe_success == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Aplikacja nie odpowiada"
+          description: "Endpoint app.andrzejpusty.pl/health nie odpowiada od ponad 30 sekund."
+
+  - name: system-alerts
+    rules:
+
+      - alert: HostDown
+        expr: up{job="node_exporter"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node exporter nie odpowiada"
+          description: "Prometheus nie może pobrać metryk z node_exportera."
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Wysokie użycie CPU"
+          description: "CPU na serwerze przekracza 80%."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Wysokie użycie RAM"
+          description: "Zużycie pamięci RAM przekracza 85%."
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Mało miejsca na dysku"
+          description: "Na dysku systemowym zostało mniej niż 10% miejsca."
+
+  - name: container-alerts
+    rules:
+
+      - alert: CadvisorDown
+        expr: up{job="cadvisor"} == 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "cAdvisor nie odpowiada"
+          description: "Prometheus nie może pobrać metryk z cAdvisor."
+
+      - alert: HighContainerCPU
+        expr: sum(rate(container_cpu_usage_seconds_total{name=~".+"}[5m])) by (name) * 100 > 90
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Wysokie CPU kontenera"
+          description: "Kontener {{ $labels.name }} używa ponad 90% CPU."
+
+      - alert: ContainerRestarting
+        expr: increase(container_start_time_seconds[5m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kontener został zrestartowany"
+          description: "Kontener {{ $labels.name }} został ponownie uruchomiony."

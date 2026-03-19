@@ -1,0 +1,7 @@
+services:
+  app:
+    image: ghcr.io/andrzejpusty/devops-app:latest
+    container_name: devops-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
