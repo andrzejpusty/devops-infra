@@ -1,7 +1,7 @@
 app.andrzejpusty.pl {
 
-    reverse_proxy 172.17.0.1:8000 
-
+#    reverse_proxy 172.17.0.1:8000 
+     reverse_proxy 178.104.77.63:5000
 }
 
 grafana.andrzejpusty.pl {
